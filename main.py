@@ -7,27 +7,24 @@ from langchain.agents import create_agent
 from langchain.tools import tool
 from langchain_core.messages import HumanMessage
 from langchain_openai import ChatOpenAI
-from tavily import TavilyClient # or Langchain ttavily for better experience
-from langchain_tavily import tavily_search
+from langchain_tavily import  TavilySearch
+from pydantic import BaseModel,Field
+from typing import List
 
-tavily = TavilyClient()
-@tool  #langchain is gng to format as metadata  and use in LLM call 
-def Search(query: str) -> str:
-    """
-    Tool that searches over internet
-    Args;
-     query: The query to search for
-     Returns: The Search results
-    """
-    print(f'Searching for {query}')
-    return tavily.search(query)
+class Source(BaseModel):
+    url:str = Field(description="URl of the Source")
 
 
+
+class AgentResponse(BaseModel):
+    answer:str = Field(description="Answer to the query")
+    sources:List[Source] = Field(default_factory=list,description="List of sources used to generate the Answer")
+    
 
 
 llm = ChatOpenAI()
-tools = [Search]
-agent = create_agent(model=llm,tools=tools)
+tools = [TavilySearch()]
+agent = create_agent(model=llm,tools=tools,response_format=AgentResponse)
 
 def main():
     print("Hello from langchain-course")
