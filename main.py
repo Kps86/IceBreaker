@@ -29,7 +29,7 @@ agent = create_agent(model=llm,tools=tools,response_format=AgentResponse)
 def main():
     print("Hello from langchain-course")
     result = agent.invoke({"messages":HumanMessage(content="Bring the high paid job in iT roles from linkedIn")})
-    print(result)
+    print(f'{result}')
 
 
 if __name__ == "__main__":
